@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -94,9 +95,8 @@ public class FitnessTracker
     //1
     public static void addWeight()
     {
-        UserInput.nextLine();
-        System.out.println("Enter a Date: ");
-        String date = UserInput.nextLine();
+        String date = LocalDate.now().toString();
+        System.out.println("Date set to today: " + date);
 
         double weight = getDoubleInput("Enter a weight in kg: ");
 
@@ -127,6 +127,8 @@ public class FitnessTracker
     //3
     public static void addWorkout()
     {
+        String date = LocalDate.now().toString();
+        System.out.println("Date set to today: " + date);
 
         UserInput.nextLine();
         System.out.print("Enter a excersise: ");
@@ -137,7 +139,7 @@ public class FitnessTracker
         int reps = getIntInput("Enter a number of reps: ");
 
         //puts the inputs into the WorkoutEntry class and adds into the arrayList
-        WorkoutEntry workout = new WorkoutEntry(excersise, sets, reps);
+        WorkoutEntry workout = new WorkoutEntry(date, excersise, sets, reps);
         workoutEntries.add(workout);
     }
 
