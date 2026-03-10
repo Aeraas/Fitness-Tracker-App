@@ -16,9 +16,9 @@ public class FitnessTracker
 
     public static void main(String [] args)
     {
-        //this is to load the stff from the files for the machines memory
+        //this is to load the stuff from the files for the machines memory
         loadWeightsFromFile();
-        //loadWorkoutsFromFile();
+        loadWorkoutsFromFile();
         
         //the choice for the program
         int choice = 0;
@@ -28,7 +28,7 @@ public class FitnessTracker
         System.out.println("---------------------------");
 
         //this keeps running until the user inputs a 5 to shut of the whole while loop
-        while(choice != 7)
+        while(choice != 8)
         {
             //the instructions of the algorithm
             printMenu();
@@ -36,7 +36,7 @@ public class FitnessTracker
             //user inputs a number after the instructions
             choice = UserInput.nextInt();
 
-            //switch statement that checks for all the choices posibilites and gives a response
+            //switch statement that checks for all the choices possibilities and gives a response
             switch (choice)
             {
                 //add weight
@@ -65,6 +65,10 @@ public class FitnessTracker
                    continue;
 
                 case 7:
+                    viewStats();
+                    continue;
+
+                case 8:
                     System.out.println("Thank you for your time! GOODBYE");
                     continue;
 
@@ -87,7 +91,8 @@ public class FitnessTracker
         System.out.println("4. View Workout");
         System.out.println("5. Delete WeightEntry");
         System.out.println("6. Delete WorkoutEntry");
-        System.out.println("7. Exit :>");
+        System.out.println("7. View Stats");
+        System.out.println("8. Exit :>");
     }
 
 
@@ -98,7 +103,23 @@ public class FitnessTracker
         System.out.println("Enter a Date: ");
         String date = UserInput.nextLine();
 
-        double weight = getDoubleInput("Enter a weight in kg: ");
+        double weight;
+
+        while(true)
+        {
+            
+            weight = getDoubleInput("Enter a weight in kg: ");
+
+            if(weight > 0)
+            {
+                break;
+            }
+            else
+            {
+                System.out.println("Weight must be greater than 0");
+            }
+
+        }
 
         //makes a WeightEntry item from the inputs then adds it to its arrayList
         WeightEntry entry = new WeightEntry(date, weight);
@@ -117,7 +138,7 @@ public class FitnessTracker
         else
         {
             System.out.println("Valid entries being printed: ");
-            for(WeightEntry i : weightEntries) //for each loop for the array lsit
+            for(WeightEntry i : weightEntries) //for each loop for the array list
             {
                 i.display(); //using the display method from the class
             }
@@ -129,16 +150,57 @@ public class FitnessTracker
     {
 
         UserInput.nextLine();
-        System.out.print("Enter a excersise: ");
-        String excersise = UserInput.nextLine();
 
-        int sets = getIntInput("Enter a number of sets: ");
+        String exercise;
+        while(true)
+        {
+            System.out.print("Enter a exercise: ");
+            exercise = UserInput.nextLine();
 
-        int reps = getIntInput("Enter a number of reps: ");
+            if(!exercise.isEmpty())
+            {
+                break;
+            }
+            else
+            {
+                System.out.println("Exercise name cannot be empty");
+            }
+        }
+
+        int sets;
+        while(true)
+        {
+            sets = getIntInput("Enter a number of sets: ");
+
+            if(sets > 0)
+            {
+                break;
+            }
+            else
+            {
+                System.out.println("Sets must be more than 0");
+            }
+        }
+
+        int reps;
+        while(true)
+        {
+            reps = getIntInput("Enter a number of reps: ");
+
+            if(reps > 0)
+            {
+                break;
+            }
+            else
+            {
+                System.out.println("Reps must be more than 0");
+            }
+        }
 
         //puts the inputs into the WorkoutEntry class and adds into the arrayList
-        WorkoutEntry workout = new WorkoutEntry(excersise, sets, reps);
+        WorkoutEntry workout = new WorkoutEntry(exercise, sets, reps);
         workoutEntries.add(workout);
+        saveWorkoutsToFiles();
     }
 
     //4
@@ -172,11 +234,17 @@ public class FitnessTracker
         }
 
         //ask which to delete
-        System.out.println("Which to delete: ");
-        delete = UserInput.nextInt();
+        delete = getIntInput("Which to delete: ");
+
+        if(delete < 1 || delete > weightEntries.size())
+        {
+            System.out.println("Invalid entry number.");
+            return;
+        }
 
         //delete
         weightEntries.remove(delete - 1);
+        saveWeightsToFile();
     }
 
     //6
@@ -192,15 +260,42 @@ public class FitnessTracker
         }
 
         //ask which to delete
-        System.out.println("Which to delete: ");
-        delete = UserInput.nextInt();
+        delete = getIntInput("Which to delete: ");
+
+        if(delete < 1 || delete > workoutEntries.size())
+        {
+            System.out.println("Invalid entry number.");
+            return;
+        }
 
         //delete
         workoutEntries.remove(delete - 1);
+        saveWorkoutsToFiles();
     }
 
-    //to make sure whatever the user typed a int that is valid
-    //allows all sorts of inputs just incase
+
+    //7
+    public static void viewStats()
+    {
+        System.out.println("\n====== Fitness Stats ======");
+
+        System.out.println("Total weight entries: " + weightEntries.size());
+        System.out.println("Total workout entries: " + workoutEntries.size());
+
+        if(weightEntries.isEmpty())
+        {
+            System.out.println("Latest weight entry: No weight entry");
+        }
+        else
+        {
+            WeightEntry latestEntry = weightEntries.getLast();
+            System.out.println("Latest weight entry:");
+            latestEntry.display();
+        }
+    }
+
+    //to make sure whatever the user typed int that is valid
+    //allows all sorts of inputs just in case
     public static int getIntInput(String message)
     {
         while(true)
@@ -208,7 +303,7 @@ public class FitnessTracker
             System.out.println(message);
             if(UserInput.hasNextInt())
             {
-                return UserInput.nextInt();
+                    return UserInput.nextInt();
             }
             else
             {
@@ -219,8 +314,8 @@ public class FitnessTracker
     }
 
     //to make sure what they type is a valid double
-    //it gets a user to input a input and it checks if the input is a double
-    //if its a double it returns the double if not then they have to put another one again
+    //it gets a user to input an input, and it checks if the input is a double
+    //if it's a double it returns the double if not then they have to put another one again
     public static double getDoubleInput(String message)
     {
         while(true)
@@ -243,7 +338,7 @@ public class FitnessTracker
     //Save WeightsToFile
     public static void saveWeightsToFile()
     {
-        try //to stop the any file failing in case
+        try //to stop any file failing in case
         {
             //this opens or creates a file called weight text
             //PrintWriter lets us write lines with println
@@ -252,12 +347,12 @@ public class FitnessTracker
             //this goes through each object in the array
             for(WeightEntry entry : weightEntries)
             {
-                //this converts the object into text with comas seperating the valeus
-                //so that later we can split them with the ,
+                //this converts the object into text with comas separating the values
+                //so that later we can split them with the ","
                 writer.println(entry.getDate() + "," + entry.getWeight());
             }
 
-            //file might corrurpt if you dont close it always close it
+            //file might corrupt if you don't close it always close it
             writer.close();
         }catch (IOException e)
         {
@@ -274,15 +369,15 @@ public class FitnessTracker
             //this creates a file object that represents the file
             File file = new File("weights.txt");
 
-            //if the file doesnt exist juststop
-            //since first time u run this program the file doesnt exist and it will just crash it
+            //if the file doesn't exist just stop
+            //since first time u run this program the file doesn't exist, and it will just crash it
             if(!file.exists())
             {
                 return;
             }
 
             //this opens the file with a scanner
-            //this scanner reades lines instead of user input
+            //this scanner reads lines instead of user input
             Scanner fileScanner = new Scanner(file);
 
             //runs once per line in file
@@ -299,7 +394,7 @@ public class FitnessTracker
                     String date = parts[0];
                     double weight = Double.parseDouble(parts[1]);
 
-                    //we rebuild the object for the progtam
+                    //we rebuild the object for the program
                     WeightEntry entry = new WeightEntry(date,weight);
                     weightEntries.add(entry);
                 }
@@ -313,16 +408,62 @@ public class FitnessTracker
     }
 
 
+//saveWorkoutToFiles
+    public static void saveWorkoutsToFiles()
+    {
+        try
+        {
+            PrintWriter writer = new PrintWriter(new FileWriter("workout.txt"));
 
+            for(WorkoutEntry entry: workoutEntries)
+            {
+                writer.println(entry.getWorkout()+ "," + entry.getReps() + "," + entry.getSets());
+            }
 
+            writer.close();
 
+        } catch (IOException e)
+        {
+            System.out.println("Error saving workout entries");
+        }
+    }
 
+    //load the workout files
+    public static void loadWorkoutsFromFile()
+    {
+        try
+        {
+            File file = new File("workout.txt");
 
+            if(!file.exists())
+            {
+                return;
+            }
 
+            //scanner
+            Scanner fileScanner = new Scanner(file);
 
+            while(fileScanner.hasNextLine())
+            {
+                String line = fileScanner.nextLine();
+                String [] parts = line.split(",");
 
+                if(parts.length == 3)
+                {
+                    //we assign the parts into a variable
+                    String Workout = parts[0];
+                    int sets = Integer.parseInt(parts[1]);
+                    int reps = Integer.parseInt(parts[2]);
 
+                    //we rebuild the object for the program
+                    WorkoutEntry entry = new WorkoutEntry(Workout,sets,reps);
+                    workoutEntries.add(entry);
+                }
+            }
+        } catch (Exception e)
+        {
+            System.out.println("Error loading workouts into the program");
+        }
 
-
-
+    }
 }

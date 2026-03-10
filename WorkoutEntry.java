@@ -5,7 +5,7 @@ public class WorkoutEntry
     private int sets;
     private int reps;
 
-    //constructor for he class
+    //constructor for the class
     public WorkoutEntry(String workout, int sets, int reps)
     {
         this.workout = workout;
