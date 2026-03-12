@@ -1,18 +1,20 @@
+import java.time.LocalDate;
+
 public class WeightEntry
 {
     //assigning variables to the class
-    private String date;
+    private LocalDate date;
     private double weight;
 
     //constructor
-    public WeightEntry(String date, double weight)
+    public WeightEntry(LocalDate date, double weight)
     {
         this.date = date;
         this.weight = weight;
     }
 
     //now for the get methods
-    public String getDate()
+    public LocalDate getDate()
     {
         return date;
     }
